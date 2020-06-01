@@ -13,6 +13,8 @@ PORT = 53
 LOCAL_HOST = '127.0.0.1'
 FORWARDER = '8.8.4.4'                           # one of Google Public DNS servers
 CACHE_TIME_CHECK = 360
+# dns.adguard.com
+FORWARDER_2 = '176.103.130.130'
 
 
 def set_forwarding_address():
@@ -22,7 +24,7 @@ def set_forwarding_address():
         if custom_forwarder:
             return custom_forwarder
         else:
-            return FORWARDER
+            return FORWARDER_2
     except EOFError as ex:
         print('Invalid input: Error was raised - ' + str(ex))
         raise SystemExit
@@ -83,7 +85,7 @@ while True:                                                     # listening infi
     else:
         try:
             # TODO: FORWARDER hardcoded for debugging reasons
-            client.sendto(req, (FORWARDER, PORT))            # FORWARDER needs to be changed to set_forwarding_address()
+            client.sendto(req, (FORWARDER_2, PORT))          # FORWARDER needs to be changed to set_forwarding_address()
             dns_answer, z = client.recvfrom(2048)
             dns_answer_parsed = dnslib.DNSRecord.parse(dns_answer)
             cache[(dns_answer_parsed.questions[0].qname,
