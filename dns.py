@@ -86,16 +86,17 @@ while True:                                                     # listening infi
         try:
             # TODO: FORWARDER hardcoded for debugging reasons
             client.sendto(req, (FORWARDER_2, PORT))          # FORWARDER needs to be changed to set_forwarding_address()
-            dns_answer, z = client.recvfrom(2048)
-            dns_answer_parsed = dnslib.DNSRecord.parse(dns_answer)
-            cache[(dns_answer_parsed.questions[0].qname,
+            dns_answer, z = client.recvfrom(2048)            # получаем ответ от сервера (DNS-пакет)
+            dns_answer_parsed = dnslib.DNSRecord.parse(dns_answer)      # парсим его с помощью dnslib.DNSRecord
+            cache[(dns_answer_parsed.questions[0].qname,                # заносим в кэш, организованный как хэш-таблица
                    dns_answer_parsed.questions[0].qtype)] = dns_answer_parsed.rr, time.time()
             if dns_answer_parsed.auth:
                 cache[(dns_answer_parsed.questions[0].qname,
                        dns_answer_parsed.questions[0].qtype)] = dns_answer_parsed.rr, time.time()
 
             for extra_info in dns_answer_parsed.ar:
-                cache[(extra_info.rname, extra_info.rtype)] = [extra_info], time.time()
+                cache[(extra_info.rname, extra_info.rtype)] = [extra_info], time.time()     # сохранение дополнительной
+                                                                                            # информации из ответа
 
             write_cache(cache)
             print(cache)
